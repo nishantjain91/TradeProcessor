@@ -1,4 +1,4 @@
-tradeId| stockName|brokerCode| brokerName| quantity|  tradeDate|settlementDate| buySellIndicator
+tradeId| stockName|brokerCode| brokerName| quantity|  settlementDate  |tradeDate| buySellIndicator
 234| IBM |MS | Morgan Stanley |300 | 05/15/2018 | 05/12/2018|B
 257| HCL |GS |Goldman Sachs |40 | 06/21/2018 | 06/18/2018|B
 326| Pepsi |MS  |Morgan Stanley |50 | 06/23/2018 | 06/18/2018|B

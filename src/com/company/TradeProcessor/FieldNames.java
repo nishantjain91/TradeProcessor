@@ -3,7 +3,7 @@ package com.company.TradeProcessor;
 public enum FieldNames {
     tradeId("tradeId"),
     stockName("stockName"),
-    brokername("brokerName"),
+    brokerName("brokerName"),
     brokerCode("brokerCode"),
     quantity("quantity"),
     tradeDate("tradeDate"),

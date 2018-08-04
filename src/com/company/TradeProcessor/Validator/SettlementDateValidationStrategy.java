@@ -13,8 +13,8 @@ import java.util.Map;
 public class SettlementDateValidationStrategy implements  ValidationStrategy{
     @Override
     public boolean validate(Map input) {
-        if(!input.containsKey(FieldNames.settlementDate) )return false;
-        String value = (String) input.get(FieldNames.settlementDate);
+        if(!input.containsKey(FieldNames.settlementDate.toString()) )return false;
+        String value = (String) input.get(FieldNames.settlementDate.toString());
         if(value.length()==0) return false;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         try {

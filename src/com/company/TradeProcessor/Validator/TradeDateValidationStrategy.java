@@ -10,8 +10,8 @@ import java.util.Map;
 public class TradeDateValidationStrategy implements  ValidationStrategy{
     @Override
     public boolean validate(Map input) {
-        if(!input.containsKey(FieldNames.tradeDate) )return false;
-        String value = (String) input.get(FieldNames.tradeDate);
+        if(!input.containsKey(FieldNames.tradeDate.toString()) )return false;
+        String value = (String) input.get(FieldNames.tradeDate.toString());
         if(value.length()==0) return false;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         try {

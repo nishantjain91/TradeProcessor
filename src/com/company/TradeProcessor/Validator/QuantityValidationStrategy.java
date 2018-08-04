@@ -7,8 +7,8 @@ import java.util.Map;
 public class QuantityValidationStrategy implements  ValidationStrategy{
     @Override
     public boolean validate(Map input) {
-        if(!input.containsKey(FieldNames.quantity) )return false;
-        String value = (String) input.get(FieldNames.quantity);
+        if(!input.containsKey(FieldNames.quantity.toString()) )return false;
+        String value = (String) input.get(FieldNames.quantity.toString());
         if(value.length()==0) return false;
         try{
             int val = Integer.parseInt(value);
