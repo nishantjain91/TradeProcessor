@@ -66,10 +66,12 @@ public class InternalStorage<T extends Trade> implements AbstractStorage {
         for(String s:concurrentHashMapForMaximumTrade.keySet()){
             pq.add(new Pair(s,concurrentHashMapForMaximumTrade.get(s)));
         }
+        int size = pq.size();
 
         ArrayList<String> s= new ArrayList<>();
-        for(int i=0;i<numOfResults && i<pq.size();i++){
-            s.add(Objects.requireNonNull(pq.poll()).getName());
+        for(int i=0;i<numOfResults && i<size;i++){
+            String name = pq.poll().getName();
+            s.add(name);
         }
         return s;
 

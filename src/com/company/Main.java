@@ -4,6 +4,7 @@ import com.company.Database.AbstractStorage;
 import com.company.Database.AbstractStorageFactory;
 import com.company.Database.InternalStorageFactory;
 import com.company.Reader.CSVReader;
+import com.company.Server.TradeServer;
 import com.company.TradeProcessor.Trade;
 import com.company.TradeProcessor.TradeProcessor;
 import com.company.TradeProcessor.Validator.TradeValidationStrategy;
@@ -31,6 +32,14 @@ public class Main {
         System.out.println(abstractStorage.getTradeListByMaximumQuantity(10));
         System.out.println(abstractStorage.getTradeListbByBrokerCode("MS"));
         System.out.println(abstractStorage.getTradeListbByBrokerName("Morgan Stanley"));
+
+        try {
+            TradeServer server = new TradeServer(abstractStorage,8000);
+            server.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
 
     }
