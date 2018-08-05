@@ -23,7 +23,7 @@ public class CSVReader extends Reader implements Iterator<TradeMapper> {
     public CSVReader(String fileName, boolean header, String split) throws IOException{
         br = new BufferedReader(new FileReader(fileName));
         this.splitCharacter = split;
-        if(header==true) processHeaders(br.readLine());
+        if(header) processHeaders(br.readLine());
         else processHeaders();
         advance();
     }
@@ -37,7 +37,7 @@ public class CSVReader extends Reader implements Iterator<TradeMapper> {
     }
 
     private void processHeaders(String headers){
-        if(headers==null || headers==""){
+        if(headers==null || headers.equals("")){
             processHeaders();
             return;
         }
@@ -55,7 +55,6 @@ public class CSVReader extends Reader implements Iterator<TradeMapper> {
     @Override
     public TradeMapper next() {
         Map<String,String> map = new HashMap<>();
-        String s = line;
 
         String[] sArray = line.split(splitCharacter);
         for (int i = 0; i < sArray.length; i++)

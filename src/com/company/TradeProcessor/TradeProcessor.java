@@ -12,7 +12,7 @@ import java.util.concurrent.Future;
 
 public class TradeProcessor {
 
-    ExecutorService executorService;
+    private ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     private static TradeProcessor ourInstance ;
     private final static Object  lock = new Object();
@@ -29,7 +29,6 @@ public class TradeProcessor {
     }
 
     private TradeProcessor() {
-        executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
 
     public void exceuteTrades(final Iterator reader, final  ValidationSet validationSet, final AbstractStorage<Trade> abstractStorage) throws InterruptedException, ExecutionException {
@@ -38,11 +37,10 @@ public class TradeProcessor {
             TradeMapper  m = (TradeMapper) reader.next();
             futures.add(executorService.submit(new ProcessTrade(m,validationSet,abstractStorage)));
         }
+        ProcessTradeResult processTradeResult;
         for(Future<ProcessTradeResult> f: futures){
-            ProcessTradeResult processTradeResult= f.get();
-            if(processTradeResult.isStatus()==true){
-            }
-            else{
+            processTradeResult = f.get();
+            if(!processTradeResult.isStatus()){
                 System.out.println(processTradeResult.getReason()+" " + processTradeResult.getInput().toString());
             }
         }

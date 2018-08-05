@@ -3,12 +3,12 @@ package com.company.TradeProcessor;
 import com.company.TradeMapper;
 
 public class ProcessTradeResult {
-    final boolean status;
-    final Trade trade;
-    final TradeMapper input;
-    final String reason;
+    private final boolean status;
+    private final Trade trade;
+    private final TradeMapper input;
+    private final String reason;
 
-    public boolean isStatus() {
+    boolean isStatus() {
         return status;
     }
 
@@ -20,7 +20,7 @@ public class ProcessTradeResult {
         return input;
     }
 
-    public String getReason() {
+    String getReason() {
         return reason;
     }
 

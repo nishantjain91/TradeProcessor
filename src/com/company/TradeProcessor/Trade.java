@@ -60,7 +60,7 @@ public class Trade {
         return brokerName;
     }
 
-    public Trade(String tradeId, String stockName, int quantity, LocalDate tradeDate, LocalDate settlementDate, char buySellIndicator, String brokerCode, String brokerName) {
+    private Trade(String tradeId, String stockName, int quantity, LocalDate tradeDate, LocalDate settlementDate, char buySellIndicator, String brokerCode, String brokerName) {
         this.tradeId = tradeId;
         this.stockName = stockName;
         this.quantity = quantity;
@@ -71,7 +71,7 @@ public class Trade {
         this.brokerName = brokerName;
     }
 
-    public static class TradeBuilder{
+     static class TradeBuilder{
 
         private String tradeId;
         private String stockName;
@@ -82,18 +82,17 @@ public class Trade {
         private String brokerCode;
         private String brokerName;
 
-        public TradeBuilder(){
+        TradeBuilder(){
             quantity = Integer.MIN_VALUE;
-            buySellIndicator = 0;
         }
 
-        public Trade build(){
+        Trade build(){
             if(tradeId.isEmpty() || stockName.isEmpty()||quantity==Integer.MIN_VALUE||
             tradeDate==null || settlementDate==null || buySellIndicator==0 || brokerCode.isEmpty() || brokerName.isEmpty())
                 return null;
             return new Trade(tradeId,stockName,quantity,tradeDate,settlementDate,buySellIndicator,brokerCode,brokerName);
         }
-        public TradeBuilder buildFromMap(Map<String,String> map){
+        TradeBuilder buildFromMap(Map<String, String> map){
               for(String key: map.keySet()){
                   this.add(key,map.get(key));
               }

@@ -13,7 +13,7 @@ public class ProcessTrade implements Callable<ProcessTradeResult> {
     private ValidationSet validationSet;
     private AbstractStorage<Trade> abstractStorage;
 
-    public ProcessTrade( TradeMapper input,ValidationSet validationSet, AbstractStorage<Trade> abstractStorage){
+    ProcessTrade(TradeMapper input, ValidationSet validationSet, AbstractStorage<Trade> abstractStorage){
         this.input=input;
         this.validationSet=validationSet;
         this.abstractStorage=abstractStorage;
@@ -21,7 +21,7 @@ public class ProcessTrade implements Callable<ProcessTradeResult> {
 
     @Override
     public ProcessTradeResult call() {
-        Set<ValidationStrategy> set = validationSet.getValidationStrategies();;
+        Set<ValidationStrategy> set = validationSet.getValidationStrategies();
         for(ValidationStrategy validationStrategy:set){
             if(!validationStrategy.validate(input.getMap())){
                 return new ProcessTradeResult(false,null,input,"Trade Validation failed");
@@ -30,7 +30,7 @@ public class ProcessTrade implements Callable<ProcessTradeResult> {
         Trade obj = new Trade.TradeBuilder().buildFromMap(input.getMap()).build();
         if(obj==null)return new ProcessTradeResult(false,null,input,"Trade Object creation Failed");
         boolean res = abstractStorage.add(obj);
-        if(res==false)return new ProcessTradeResult(false,null,input,"Duplicate ID");
+        if(!res)return new ProcessTradeResult(false,null,input,"Duplicate ID");
         return new ProcessTradeResult(true,obj,input,"");
     }
 }

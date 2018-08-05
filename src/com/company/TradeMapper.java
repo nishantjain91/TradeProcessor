@@ -3,7 +3,7 @@ package com.company;
 import java.util.Map;
 
 public class TradeMapper {
-    Map<String,String> map;
+    private Map<String,String> map;
 
     public Map<String, String> getMap() {
         return map;

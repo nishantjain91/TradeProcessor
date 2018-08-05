@@ -2,10 +2,7 @@ package com.company.Database;
 
 import com.company.TradeProcessor.Trade;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InternalStorage<T extends Trade> implements AbstractStorage {
@@ -53,13 +50,13 @@ public class InternalStorage<T extends Trade> implements AbstractStorage {
 
     @Override
     public List<T> getTradeListbByBrokerName(String brokerName) {
-        if(!concurrentHashMapByBrokerName.containsKey(brokerName)) return new ArrayList<T>();
+        if(!concurrentHashMapByBrokerName.containsKey(brokerName)) return new ArrayList<>();
         return concurrentHashMapByBrokerName.get(brokerName);
     }
 
     @Override
     public List<T> getTradeListbByBrokerCode(String brokerCode) {
-        if(!concurrentHashMapByBrokerCode.containsKey(brokerCode)) return new ArrayList<T>();
+        if(!concurrentHashMapByBrokerCode.containsKey(brokerCode)) return new ArrayList<>();
         return concurrentHashMapByBrokerCode.get(brokerCode);
     }
 
@@ -72,7 +69,7 @@ public class InternalStorage<T extends Trade> implements AbstractStorage {
 
         ArrayList<String> s= new ArrayList<>();
         for(int i=0;i<numOfResults && i<pq.size();i++){
-            s.add(pq.poll().getName());
+            s.add(Objects.requireNonNull(pq.poll()).getName());
         }
         return s;
 
@@ -81,12 +78,12 @@ public class InternalStorage<T extends Trade> implements AbstractStorage {
         private String name;
         private int quantity;
 
-        public Pair(String name, int quanity){
+        Pair(String name, int quanity){
             this.name=name;
             this.quantity=quanity;
         }
 
-        public String getName() {
+        String getName() {
             return name;
         }
 
@@ -98,7 +95,7 @@ public class InternalStorage<T extends Trade> implements AbstractStorage {
                     '}';
         }
 
-        public int getQuantity() {
+        int getQuantity() {
             return quantity;
         }
 
@@ -107,7 +104,5 @@ public class InternalStorage<T extends Trade> implements AbstractStorage {
             return -this.quantity + o.getQuantity();
         }
     }
-    public void print(){
-        System.out.println(concurrentHashMapById.keySet());
-    }
+
 }
