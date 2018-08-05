@@ -3,56 +3,51 @@ package com.company.Database;
 import com.company.TradeProcessor.Trade;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InternalStorage<T extends Trade> implements AbstractStorage {
 
-    private final Object lock = new Object();
-    private ConcurrentHashMap<String,T> concurrentHashMapById;
+    private final static Object lock = new Object();
+    private HashMap<String,T> concurrentHashMapById;
     private ConcurrentHashMap<String,List<T>>  concurrentHashMapByBrokerName;
     private ConcurrentHashMap<String,List<T>>  concurrentHashMapByBrokerCode;
     private ConcurrentHashMap<String,Integer> concurrentHashMapForMaximumTrade;
 
-    private InternalStorage internalStorage = null;
-    private InternalStorage(){
+     InternalStorage(){
         concurrentHashMapByBrokerCode = new ConcurrentHashMap<>();
         concurrentHashMapByBrokerName = new ConcurrentHashMap<>();
-        concurrentHashMapById = new ConcurrentHashMap<>();
+        concurrentHashMapById = new HashMap<>();
         concurrentHashMapForMaximumTrade = new ConcurrentHashMap<>();
     }
 
     @Override
-    public AbstractStorage getInstance() {
-        if(internalStorage==null){
-            synchronized (lock){
-                if(internalStorage==null){
-                    internalStorage = new InternalStorage();
-                }
-            }
-        }
-        return internalStorage;
-    }
-
-
-    @Override
     public boolean add(final Object object) {
         T obj = (T)object;
-        if(concurrentHashMapById.contains(obj.getTradeId()))return false;
-        concurrentHashMapById.put(obj.getTradeId(),obj);
-        if(!concurrentHashMapByBrokerName.contains(obj.getBrokerName())){
-            concurrentHashMapByBrokerName.put(obj.getBrokerName(),new ArrayList<>());
+        //System.out.println(obj);
+
+
+        synchronized (lock) {
+            if (concurrentHashMapById.containsKey(obj.getTradeId())) return false;
+            concurrentHashMapById.put(obj.getTradeId(), obj);
+
+            if (!concurrentHashMapByBrokerName.containsKey(obj.getBrokerName())) {
+                concurrentHashMapByBrokerName.put(obj.getBrokerName(), new ArrayList<>());
+            }
+            concurrentHashMapByBrokerName.get(obj.getBrokerName()).add(obj);
+
+            if (!concurrentHashMapByBrokerCode.containsKey(obj.getBrokerName())) {
+                concurrentHashMapByBrokerCode.put(obj.getBrokerCode(), new ArrayList<>());
+            }
+            concurrentHashMapByBrokerCode.get(obj.getBrokerCode()).add(obj);
+
+            if (!concurrentHashMapForMaximumTrade.containsKey(obj.getStockName())) {
+                concurrentHashMapForMaximumTrade.put(obj.getStockName(), 0);
+            }
         }
-        concurrentHashMapByBrokerCode.get(obj.getBrokerCode()).add(obj);
-        if(!concurrentHashMapByBrokerCode.contains(obj.getBrokerName())){
-            concurrentHashMapByBrokerCode.put(obj.getBrokerCode(),new ArrayList<>());
-        }
-        concurrentHashMapByBrokerCode.get(obj.getBrokerCode()).add(obj);
-        if(!concurrentHashMapForMaximumTrade.contains(obj.getStockName())){
-            concurrentHashMapForMaximumTrade.put(obj.getStockName(),0);
-        }
-        concurrentHashMapForMaximumTrade.put(obj.getStockName(),concurrentHashMapForMaximumTrade.get(obj.getStockName()+obj.getQuantity()));
+        concurrentHashMapForMaximumTrade.put(obj.getStockName(),concurrentHashMapForMaximumTrade.get(obj.getStockName())+obj.getQuantity());
         return true;
     }
 
@@ -72,19 +67,14 @@ public class InternalStorage<T extends Trade> implements AbstractStorage {
     public List<String> getTradeListByMaximumQuantity(int numOfResults) {
         PriorityQueue<Pair> pq = new PriorityQueue<>();
         for(String s:concurrentHashMapForMaximumTrade.keySet()){
-            if(pq.size()<numOfResults){
-                pq.add(new Pair(s,concurrentHashMapForMaximumTrade.get(s)));
-            }
-            else{
-                if(pq.peek().getQuantity()<concurrentHashMapForMaximumTrade.get(s)){
-                    pq.poll();
-                    pq.add(new Pair(s,concurrentHashMapForMaximumTrade.get(s)));
-                }
-            }
+            pq.add(new Pair(s,concurrentHashMapForMaximumTrade.get(s)));
         }
+
+        //System.out.println(concurrentHashMapByBrokerName);
         ArrayList<String> s= new ArrayList<>();
-        for(Pair p:pq){
-            s.add(p.getName());
+        for(int i=0;i<numOfResults && i<pq.size();i++){
+            System.out.println(pq.peek());
+            s.add(pq.poll().getName());
         }
         return s;
 
@@ -102,13 +92,24 @@ public class InternalStorage<T extends Trade> implements AbstractStorage {
             return name;
         }
 
+        @Override
+        public String toString() {
+            return "Pair{" +
+                    "name='" + name + '\'' +
+                    ", quantity=" + quantity +
+                    '}';
+        }
+
         public int getQuantity() {
             return quantity;
         }
 
         @Override
         public int compareTo(Pair o) {
-            return this.quantity + o.getQuantity();
+            return -this.quantity + o.getQuantity();
         }
+    }
+    public void print(){
+        System.out.println(concurrentHashMapById.keySet());
     }
 }

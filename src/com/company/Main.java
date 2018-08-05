@@ -1,6 +1,10 @@
 package com.company;
 
+import com.company.Database.AbstractStorage;
+import com.company.Database.AbstractStorageFactory;
+import com.company.Database.InternalStorageFactory;
 import com.company.Reader.CSVReader;
+import com.company.TradeProcessor.Trade;
 import com.company.TradeProcessor.TradeProcessor;
 import com.company.TradeProcessor.Validator.TradeValidationStrategy;
 
@@ -18,9 +22,13 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        AbstractStorageFactory<Trade> abstractStorageFactory = new InternalStorageFactory<>();
+        AbstractStorage<Trade> abstractStorage = abstractStorageFactory.createStorage();
         TradeProcessor tradeProcessor= TradeProcessor.getInstance();
-        tradeProcessor.exceuteTrades(reader, TradeValidationStrategy.getInstance());
+        tradeProcessor.exceuteTrades(reader, TradeValidationStrategy.getInstance(),abstractStorage);
         tradeProcessor.shutDown();
+        System.out.println(abstractStorage.getTradeListByMaximumQuantity(10));
 
     }
 }

@@ -1,7 +1,7 @@
 package com.company.TradeProcessor;
 
+import com.company.Database.AbstractStorage;
 import com.company.TradeMapper;
-import com.company.TradeProcessor.Validator.TradeValidationStrategy;
 import com.company.TradeProcessor.Validator.ValidationSet;
 
 import java.util.*;
@@ -32,11 +32,11 @@ public class TradeProcessor {
         executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
 
-    public void exceuteTrades(final Iterator reader, final  ValidationSet validationSet) throws InterruptedException, ExecutionException {
+    public void exceuteTrades(final Iterator reader, final  ValidationSet validationSet, final AbstractStorage<Trade> abstractStorage) throws InterruptedException, ExecutionException {
         List<Future<ProcessTradeResult>> futures = new ArrayList<>();
         while(reader.hasNext()){
             TradeMapper  m = (TradeMapper) reader.next();
-            futures.add(executorService.submit(new ProcessTrade(m,validationSet)));
+            futures.add(executorService.submit(new ProcessTrade(m,validationSet,abstractStorage)));
         }
         for(Future<ProcessTradeResult> f: futures){
             ProcessTradeResult processTradeResult= f.get();
