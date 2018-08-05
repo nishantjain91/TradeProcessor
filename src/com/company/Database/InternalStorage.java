@@ -38,7 +38,7 @@ public class InternalStorage<T extends Trade> implements AbstractStorage {
             }
             concurrentHashMapByBrokerName.get(obj.getBrokerName()).add(obj);
 
-            if (!concurrentHashMapByBrokerCode.containsKey(obj.getBrokerName())) {
+            if (!concurrentHashMapByBrokerCode.containsKey(obj.getBrokerCode())) {
                 concurrentHashMapByBrokerCode.put(obj.getBrokerCode(), new ArrayList<>());
             }
             concurrentHashMapByBrokerCode.get(obj.getBrokerCode()).add(obj);
@@ -53,14 +53,14 @@ public class InternalStorage<T extends Trade> implements AbstractStorage {
 
     @Override
     public List<T> getTradeListbByBrokerName(String brokerName) {
-        if(!concurrentHashMapByBrokerName.contains(brokerName)) return new ArrayList<T>();
+        if(!concurrentHashMapByBrokerName.containsKey(brokerName)) return new ArrayList<T>();
         return concurrentHashMapByBrokerName.get(brokerName);
     }
 
     @Override
     public List<T> getTradeListbByBrokerCode(String brokerCode) {
-        if(!concurrentHashMapByBrokerName.contains(brokerCode)) return new ArrayList<T>();
-        return concurrentHashMapByBrokerName.get(brokerCode);
+        if(!concurrentHashMapByBrokerCode.containsKey(brokerCode)) return new ArrayList<T>();
+        return concurrentHashMapByBrokerCode.get(brokerCode);
     }
 
     @Override
@@ -70,10 +70,8 @@ public class InternalStorage<T extends Trade> implements AbstractStorage {
             pq.add(new Pair(s,concurrentHashMapForMaximumTrade.get(s)));
         }
 
-        //System.out.println(concurrentHashMapByBrokerName);
         ArrayList<String> s= new ArrayList<>();
         for(int i=0;i<numOfResults && i<pq.size();i++){
-            System.out.println(pq.peek());
             s.add(pq.poll().getName());
         }
         return s;

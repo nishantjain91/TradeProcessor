@@ -1,7 +1,7 @@
 package com.company.TradeProcessor;
 
 import com.company.Database.AbstractStorage;
-import com.company.TradeMapper;
+ import com.company.TradeMapper;
 import com.company.TradeProcessor.Validator.ValidationSet;
 
 import java.util.*;
@@ -43,7 +43,7 @@ public class TradeProcessor {
             if(processTradeResult.isStatus()==true){
             }
             else{
-                System.out.println("Trade Validation Failed" + processTradeResult.getInput().toString());
+                System.out.println(processTradeResult.getReason()+" " + processTradeResult.getInput().toString());
             }
         }
     }

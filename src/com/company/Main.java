@@ -29,6 +29,9 @@ public class Main {
         tradeProcessor.exceuteTrades(reader, TradeValidationStrategy.getInstance(),abstractStorage);
         tradeProcessor.shutDown();
         System.out.println(abstractStorage.getTradeListByMaximumQuantity(10));
+        System.out.println(abstractStorage.getTradeListbByBrokerCode("MS"));
+        System.out.println(abstractStorage.getTradeListbByBrokerName("Morgan Stanley"));
+
 
     }
 }

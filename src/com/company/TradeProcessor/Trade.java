@@ -88,6 +88,9 @@ public class Trade {
         }
 
         public Trade build(){
+            if(tradeId.isEmpty() || stockName.isEmpty()||quantity==Integer.MIN_VALUE||
+            tradeDate==null || settlementDate==null || buySellIndicator==0 || brokerCode.isEmpty() || brokerName.isEmpty())
+                return null;
             return new Trade(tradeId,stockName,quantity,tradeDate,settlementDate,buySellIndicator,brokerCode,brokerName);
         }
         public TradeBuilder buildFromMap(Map<String,String> map){

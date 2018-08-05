@@ -3,9 +3,10 @@ package com.company.TradeProcessor;
 import com.company.TradeMapper;
 
 public class ProcessTradeResult {
-    boolean status;
-    Trade trade;
-    TradeMapper input;
+    final boolean status;
+    final Trade trade;
+    final TradeMapper input;
+    final String reason;
 
     public boolean isStatus() {
         return status;
@@ -19,9 +20,15 @@ public class ProcessTradeResult {
         return input;
     }
 
-    public ProcessTradeResult(boolean status, Trade trade, TradeMapper input) {
+    public String getReason() {
+        return reason;
+    }
+
+    public ProcessTradeResult(boolean status, Trade trade, TradeMapper input, String reason) {
         this.status = status;
         this.trade = trade;
         this.input=input;
+        this.reason = reason;
     }
+
 }

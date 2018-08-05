@@ -24,14 +24,13 @@ public class ProcessTrade implements Callable<ProcessTradeResult> {
         Set<ValidationStrategy> set = validationSet.getValidationStrategies();;
         for(ValidationStrategy validationStrategy:set){
             if(!validationStrategy.validate(input.getMap())){
-                return new ProcessTradeResult(false,null,input);
+                return new ProcessTradeResult(false,null,input,"Trade Validation failed");
             }
         }
         Trade obj = new Trade.TradeBuilder().buildFromMap(input.getMap()).build();
+        if(obj==null)return new ProcessTradeResult(false,null,input,"Trade Object creation Failed");
         boolean res = abstractStorage.add(obj);
-       // System.out.println(obj.getTradeId());
-        //System.out.println(res);
-        if(res==false)return new ProcessTradeResult(false,null,input);
-        return new ProcessTradeResult(true,obj,input);
+        if(res==false)return new ProcessTradeResult(false,null,input,"Duplicate ID");
+        return new ProcessTradeResult(true,obj,input,"");
     }
 }
