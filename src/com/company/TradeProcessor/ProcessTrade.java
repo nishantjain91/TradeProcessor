@@ -1,33 +1,30 @@
 package com.company.TradeProcessor;
 
+import com.company.TradeMapper;
+import com.company.TradeProcessor.Validator.TradeValidationStrategy;
+import com.company.TradeProcessor.Validator.ValidationSet;
 import com.company.TradeProcessor.Validator.ValidationStrategy;
-
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
 public class ProcessTrade implements Callable<ProcessTradeResult> {
 
-    private Set<ValidationStrategy> set;
-    private Map<String,String> input;
+    private TradeMapper input;
+    private ValidationSet validationSet;
 
-    public ProcessTrade(Set<ValidationStrategy> set, Map<String,String> input){
-        this.set = set;
+    public ProcessTrade( TradeMapper input,ValidationSet validationSet){
         this.input=input;
+        this.validationSet=validationSet;
     }
 
     @Override
-    public ProcessTradeResult call() throws Exception {
-
-
+    public ProcessTradeResult call() {
+        Set<ValidationStrategy> set = validationSet.getValidationStrategies();;
         for(ValidationStrategy validationStrategy:set){
-            if(!validationStrategy.validate(input)){
-                System.out.println(validationStrategy.getClass().getName());
-
-                return new ProcessTradeResult(false,null);
+            if(!validationStrategy.validate(input.getMap())){
+                return new ProcessTradeResult(false,null,input);
             }
         }
-        return new ProcessTradeResult(true,new Trade.TradeBuilder().buildFromMap(input).build());
-
+        return new ProcessTradeResult(true,new Trade.TradeBuilder().buildFromMap(input.getMap()).build(),input);
     }
 }

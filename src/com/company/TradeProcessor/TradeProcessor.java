@@ -1,7 +1,8 @@
 package com.company.TradeProcessor;
 
-
-import com.company.TradeProcessor.Validator.*;
+import com.company.TradeMapper;
+import com.company.TradeProcessor.Validator.TradeValidationStrategy;
+import com.company.TradeProcessor.Validator.ValidationSet;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -11,38 +12,44 @@ import java.util.concurrent.Future;
 
 public class TradeProcessor {
 
-    Iterator reader;
-    public TradeProcessor(Iterator reader){
-        this.reader = reader;
+    ExecutorService executorService;
+
+    private static TradeProcessor ourInstance ;
+    private final static Object  lock = new Object();
+
+    public static TradeProcessor getInstance() {
+        if(ourInstance==null){
+            synchronized (lock){
+                if(ourInstance==null){
+                    ourInstance=new TradeProcessor();
+                }
+            }
+        }
+        return ourInstance;
     }
 
-    public void exceuteTrades() throws InterruptedException, ExecutionException {
-        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        Set<ValidationStrategy> validationStrategySet = makeValidationStrategySet();
-        List<ProcessTrade> tasks = new ArrayList<>();
+    private TradeProcessor() {
+        executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    }
+
+    public void exceuteTrades(final Iterator reader, final  ValidationSet validationSet) throws InterruptedException, ExecutionException {
+        List<Future<ProcessTradeResult>> futures = new ArrayList<>();
         while(reader.hasNext()){
-            Map<String,String>m = (Map<String, String>) reader.next();
-            tasks.add(new ProcessTrade(validationStrategySet,m));
+            TradeMapper  m = (TradeMapper) reader.next();
+            futures.add(executorService.submit(new ProcessTrade(m,validationSet)));
         }
-        List<Future<ProcessTradeResult>> futures= executorService.invokeAll(tasks);
         for(Future<ProcessTradeResult> f: futures){
             ProcessTradeResult processTradeResult= f.get();
-            if(processTradeResult.isStatus()==true)
-                System.out.println(processTradeResult.getTrade());
+            if(processTradeResult.isStatus()==true){
+            }
+            else{
+                System.out.println("Trade Validation Failed" + processTradeResult.getInput().toString());
+            }
         }
+    }
+
+    public void shutDown(){
         executorService.shutdown();
     }
 
-    private Set<ValidationStrategy> makeValidationStrategySet(){
-        Set<ValidationStrategy> validationStrategySet = new HashSet<>();
-        validationStrategySet.add(new BrokerCodeValidationStrategy());
-        validationStrategySet.add(new BrokerNameValidationStrategy());
-        validationStrategySet.add(new BuySellIndicatorValidationStrategy());
-        validationStrategySet.add(new QuantityValidationStrategy());
-        validationStrategySet.add(new StockNameValidationStrategy());
-        validationStrategySet.add(new TradeDateSettlementDateValidationStrategy());
-        validationStrategySet.add(new TradeIdValidationStrategy());
-
-        return validationStrategySet;
-    }
 }

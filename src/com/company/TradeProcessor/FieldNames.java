@@ -12,7 +12,6 @@ public enum FieldNames {
 
     private final String text;
 
-
     FieldNames(final String text) {
         this.text = text;
     }

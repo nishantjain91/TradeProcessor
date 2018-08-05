@@ -1,17 +1,17 @@
 package com.company.Reader;
 
+import com.company.TradeMapper;
 import com.company.TradeProcessor.FieldNames;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 
-public class CSVReader extends Reader implements Iterator<Map> {
+public class CSVReader extends Reader implements Iterator<TradeMapper> {
 
 
     private String[] fields;
@@ -23,11 +23,9 @@ public class CSVReader extends Reader implements Iterator<Map> {
     public CSVReader(String fileName, boolean header, String split) throws IOException{
         br = new BufferedReader(new FileReader(fileName));
         this.splitCharacter = split;
-        if(header=true) processHeaders(br.readLine());
+        if(header==true) processHeaders(br.readLine());
         else processHeaders();
         advance();
-        System.out.println(Arrays.toString(fields));
-
     }
 
     private void processHeaders() {
@@ -55,7 +53,7 @@ public class CSVReader extends Reader implements Iterator<Map> {
     }
 
     @Override
-    public Map next() {
+    public TradeMapper next() {
         Map<String,String> map = new HashMap<>();
         String s = line;
 
@@ -66,7 +64,7 @@ public class CSVReader extends Reader implements Iterator<Map> {
         for (int i = 0; i < sArray.length; i++)
             map.put(fields[i],sArray[i]);
         advance();
-        return map;
+        return new TradeMapper(map);
     }
 
     private void advance(){

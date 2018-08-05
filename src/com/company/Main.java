@@ -2,6 +2,7 @@ package com.company;
 
 import com.company.Reader.CSVReader;
 import com.company.TradeProcessor.TradeProcessor;
+import com.company.TradeProcessor.Validator.TradeValidationStrategy;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -17,8 +18,9 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        TradeProcessor tradeProcessor= new TradeProcessor(reader);
-        tradeProcessor.exceuteTrades();
+        TradeProcessor tradeProcessor= TradeProcessor.getInstance();
+        tradeProcessor.exceuteTrades(reader, TradeValidationStrategy.getInstance());
+        tradeProcessor.shutDown();
 
     }
 }
