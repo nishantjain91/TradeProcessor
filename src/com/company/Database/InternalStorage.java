@@ -70,7 +70,7 @@ public class InternalStorage<T extends Trade> implements AbstractStorage {
 
         ArrayList<String> s= new ArrayList<>();
         for(int i=0;i<numOfResults && i<size;i++){
-            String name = pq.poll().getName();
+            String name = Objects.requireNonNull(pq.poll()).getName();
             s.add(name);
         }
         return s;

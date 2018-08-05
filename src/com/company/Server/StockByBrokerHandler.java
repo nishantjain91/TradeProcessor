@@ -25,7 +25,6 @@ public class StockByBrokerHandler implements HttpHandler {
         else if (querypParameters.containsKey(BROKERCODE)){
             s = abstractStorage.getTradeListbByBrokerCode(querypParameters.get(BROKERCODE)).toString();
         }
-        System.out.println(s);
         exchange.sendResponseHeaders(HTTP_OK,s.length());
         exchange.getResponseBody().write(s.getBytes());
         exchange.getResponseBody().flush();
